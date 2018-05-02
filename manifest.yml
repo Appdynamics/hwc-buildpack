@@ -11,6 +11,7 @@ dependencies:
   cf_stacks:
   - windows2012R2
   - windows2016
+
 pre_package: scripts/build.sh
 include_files:
 - CHANGELOG
@@ -24,4 +25,10 @@ include_files:
 - bin/detect.bat
 - bin/detect.ps1
 - bin/release.bat
+- profile/profile.bat
+- profile/profile.ps1
+- appdynamics/AppDynamics.Agent.dll
+- appdynamics/AppDynamics.Profiler_x64.dll
+- appdynamics/AppDynamicsAgentLog.config
+- appdynamics/AppDynamicsConfig.json.default
 - manifest.yml

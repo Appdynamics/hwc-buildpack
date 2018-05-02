@@ -1,0 +1,15 @@
+{
+ "controller": {
+   "host": "",
+   "port": 8080,
+   "account": "",
+   "password": "",
+   "ssl": false,
+   "enable_tls12": false
+ },
+ "application": {
+   "name": "pcf_hwc",
+   "tier": "Tier 1",
+   "node": "Node 1"
+ }
+}

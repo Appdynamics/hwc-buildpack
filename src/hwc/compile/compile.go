@@ -8,11 +8,14 @@ import (
 	"strings"
 
 	"github.com/cloudfoundry/libbuildpack"
+
+	"fmt"
 )
 
 type Manifest interface {
 	DefaultVersion(string) (libbuildpack.Dependency, error)
 	InstallDependency(libbuildpack.Dependency, string) error
+	RootDir() string
 }
 
 type Compiler struct {
@@ -67,17 +70,154 @@ func (c *Compiler) CheckWebConfig() error {
 	return nil
 }
 
-func (c *Compiler) InstallHWC() error {
-	c.Log.BeginStep("Installing HWC")
+func (c *Compiler) CopyProfileScripts() error {
+	profiledDir := filepath.Join(c.BuildDir, "profile.d") //TODO dep dir or build dir?
+	if err := os.MkdirAll(profiledDir, 0755); err != nil {  //TODO shouldnt need this line
+		return err
+	}
 
+
+	fmt.Println(profiledDir)
+
+
+	path := filepath.Join(c.Manifest.RootDir(), "profile")
+
+
+	files111, err := filepath.Glob(filepath.Join(c.Manifest.RootDir(), "*"))
+    if err != nil {
+    	return err
+    }
+    fmt.Println(files111)
+
+
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return err
+	}
+
+	for _, fi := range files {
+		if err := libbuildpack.CopyFile(filepath.Join(path, fi.Name()), filepath.Join(profiledDir, fi.Name())); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Copy directory, skipping files that already exist
+func CopyFilesNoOverwrite(srcDir, destDir string) error {
+	destExists, _ := libbuildpack.FileExists(destDir)
+	if !destExists {
+		return errors.New("destination dir must exist")
+	}
+
+	files, err := ioutil.ReadDir(srcDir)
+	if err != nil {
+		return err
+	}
+
+	for _, f := range files {
+		src := filepath.Join(srcDir, f.Name())
+		dest := filepath.Join(destDir, f.Name())
+
+		if f.IsDir() {
+			err = os.MkdirAll(dest, f.Mode())
+			if err != nil {
+				return err
+			}
+			if err := CopyFilesNoOverwrite(src, dest); err != nil {
+				return err
+			}
+		} else {
+			if exists, err := libbuildpack.FileExists(dest); exists {
+				if err != nil {return err}
+				// fmt.Println("Using file from app directory instead of from buildpack: %s",
+				// 	filepath.Base(dest))
+				continue
+			}
+			if err = libbuildpack.CopyFile(src, dest); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *Compiler) InstallAppdynamics() error {
+	c.Log.BeginStep("Installing Appdynamics")
+
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+    if err != nil {
+    	return err
+    }
+
+	// Copy files from buildpack's /profile to the server's /.cloudfoundry dir
+	profileSrcDir := filepath.Join(dir, "..", "profile")
+	profileDstDir := filepath.Join(c.BuildDir, ".cloudfoundry")
+
+	// Must create source directory first
+	if err = os.MkdirAll(profileDstDir, 0755); err != nil { return err }
+
+	err = libbuildpack.CopyDirectory(profileSrcDir, profileDstDir)
+	if err != nil {
+		fmt.Println("Error copying /profile files")
+	} else {
+		fmt.Println("Copied files from /profile to /.cloudfoundry")
+	}
+
+	// Copy AppDynamics dlls to build directory so we can access them after the app starts because
+	// the app will be run in a different container than from where we are now (staging)
+	appdynamicsDir := filepath.Join(dir, "..", "appdynamics")
+	appdynamicsBuildDir := filepath.Join(c.BuildDir, ".appdynamics")
+	if err = os.MkdirAll(appdynamicsBuildDir, 0755); err != nil { return err }
+
+	if err = CopyFilesNoOverwrite(appdynamicsDir, appdynamicsBuildDir); err != nil {
+		fmt.Println("Error copying AppDynamics files")
+	} else {
+		fmt.Println("Copied AppDynamics files to application directory")
+	}
+
+	return nil
+}
+
+func (c *Compiler) InstallHWC() error {
+	if err := c.InstallAppdynamics(); err != nil {
+		return err
+	}
+
+	c.Log.BeginStep("Installing HWC")
+	
 	defaultHWC, err := c.Manifest.DefaultVersion("hwc")
 	if err != nil {
 		return err
 	}
 
 	c.Log.Info("HWC version %s", defaultHWC.Version)
-
 	hwcDir := filepath.Join(c.BuildDir, ".cloudfoundry")
-
 	return c.Manifest.InstallDependency(defaultHWC, hwcDir)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
