@@ -1,15 +1,15 @@
 {
  "controller": {
-   "host": "",
+   "host": "mock host",
    "port": 8080,
-   "account": "",
-   "password": "",
+   "account": "mock account",
+   "password": "mock password",
    "ssl": false,
    "enable_tls12": false
  },
  "application": {
-   "name": "pcf_hwc",
-   "tier": "Tier 1",
-   "node": "Node 1"
+   "name": "a_mock",
+   "tier": "mock tier",
+   "node": "mock node"
  }
 }

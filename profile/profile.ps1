@@ -20,24 +20,28 @@ if ([System.IO.File]::Exists($env:COR_PROFILER_PATH_64)) {
 if (-not [System.IO.File]::Exists("$env:HOME\.appdynamics\AppDynamicsConfig.json")) {
     
     Rename-Item -Path "$env:HOME\.appdynamics\AppDynamicsConfig.json.default" -NewName "$env:HOME\.appdynamics\AppDynamicsConfig.json"
+    echo "Using controller settings from AppDynamics Tile"
 
     $config = $env:VCAP_SERVICES | ConvertFrom-Json
     $credentials = $config.appdynamics.credentials
 
-    $env:APPDYNAMICS_CONTROLLER_HOST_NAME = $credentials.'host-name'
-    $env:APPDYNAMICS_CONTROLLER_PORT = $credentials.port
-    $env:APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY = $credentials.'account-access-key'
-    $env:APPDYNAMICS_AGENT_ACCOUNT_NAME = $credentials.'account-name'
-    $env:APPDYNAMICS_CONTROLLER_SSL_ENABLED = $credentials.'ssl-enabled'
-
-    $vcap_application = $env:VCAP_APPLICATION | ConvertFrom-Json
-    $appname = $vcap_application.application_name
-    $spacename = $vcap_application.space_name
+    ${env:appdynamics.controller.hostName} = $credentials.'host-name'
+    ${env:appdynamics.controller.port} = $credentials.port
+    ${env:appdynamics.agent.accountAccessKey} = $credentials.'account-access-key'
+    ${env:appdynamics.agent.accountName} = $credentials.'account-name'
+    ${env:appdynamics.controller.ssl.enabled} = $credentials.'ssl-enabled'
+    
+} else {
+	echo "Using settings from .appdynamics/AppDynamicsConfig.json"
 }
 
+$vcap_application = $env:VCAP_APPLICATION | ConvertFrom-Json
+$appname = $vcap_application.application_name
+$spacename = $vcap_application.space_name
+
 # Set default app/tier/node name if user has not specified otherwise
-if (-not (Test-Path env:APPDYNAMICS_AGENT_APPLICATION_NAME)) { $env:APPDYNAMICS_AGENT_APPLICATION_NAME = $appname }
-if (-not (Test-Path env:APPDYNAMICS_AGENT_TIER_NAME)) { $env:APPDYNAMICS_AGENT_TIER_NAME = $appname }
+if (-not (Test-Path env:APPDYNAMICS_AGENT_APPLICATION_NAME)) { $env:APPDYNAMICS_AGENT_APPLICATION_NAME = $spacename }
+if (-not (Test-Path env:APPDYNAMICS_AGENT_TIER_NAME)) { $env:APPDYNAMICS_AGENT_TIER_NAME = $spacename }
 if (-not (Test-Path env:APPDYNAMICS_AGENT_NODE_NAME)) { $env:APPDYNAMICS_AGENT_NODE_NAME = $appname }
 
 

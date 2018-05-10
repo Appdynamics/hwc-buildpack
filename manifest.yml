@@ -32,3 +32,4 @@ include_files:
 - appdynamics/AppDynamicsAgentLog.config
 - appdynamics/AppDynamicsConfig.json.default
 - manifest.yml
+- appdynamics/AppDynamicsConfig.json
