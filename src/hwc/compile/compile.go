@@ -70,39 +70,6 @@ func (c *Compiler) CheckWebConfig() error {
 	return nil
 }
 
-func (c *Compiler) CopyProfileScripts() error {
-	profiledDir := filepath.Join(c.BuildDir, "profile.d") //TODO dep dir or build dir?
-	if err := os.MkdirAll(profiledDir, 0755); err != nil {  //TODO shouldnt need this line
-		return err
-	}
-
-
-	fmt.Println(profiledDir)
-
-
-	path := filepath.Join(c.Manifest.RootDir(), "profile")
-
-
-	files111, err := filepath.Glob(filepath.Join(c.Manifest.RootDir(), "*"))
-    if err != nil {
-    	return err
-    }
-    fmt.Println(files111)
-
-
-	files, err := ioutil.ReadDir(path)
-	if err != nil {
-		return err
-	}
-
-	for _, fi := range files {
-		if err := libbuildpack.CopyFile(filepath.Join(path, fi.Name()), filepath.Join(profiledDir, fi.Name())); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // Copy directory, skipping files that already exist
 func CopyFilesNoOverwrite(srcDir, destDir string) error {
 	destExists, _ := libbuildpack.FileExists(destDir)
@@ -143,6 +110,7 @@ func CopyFilesNoOverwrite(srcDir, destDir string) error {
 	return nil
 }
 
+// Hacky solution until PCF supports profile.d and multi buildpack for HWC
 func (c *Compiler) InstallAppdynamics() error {
 	c.Log.BeginStep("Installing Appdynamics")
 
@@ -152,6 +120,7 @@ func (c *Compiler) InstallAppdynamics() error {
     }
 
 	// Copy files from buildpack's /profile to the server's /.cloudfoundry dir
+	// We can run these scripts using the buildpack's start command
 	profileSrcDir := filepath.Join(dir, "..", "profile")
 	profileDstDir := filepath.Join(c.BuildDir, ".cloudfoundry")
 
@@ -196,28 +165,3 @@ func (c *Compiler) InstallHWC() error {
 	hwcDir := filepath.Join(c.BuildDir, ".cloudfoundry")
 	return c.Manifest.InstallDependency(defaultHWC, hwcDir)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
