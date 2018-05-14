@@ -4,9 +4,9 @@ A fork of Cloud Foundry HWC buildpack version 2.3.14 for deploying .NET full fra
 
 ## Using this buildpack
 
-Cloudfoundry/PCF does not support specifying a buildpack from a git url for HWC like you can for other buildpacks so you will have to follow the instructions below for building the buildpack.
+Cloudfoundry/PCF does not support specifying a buildpack from a git url for HWC like you can for other buildpacks so you will need to follow the instructions below for building the buildpack.
 
-The purpose of this buildpack is to support users until PCF/CF releases a version of PAS for Windows with .profile.d support and updates the Cloudfoundry HWC buildpack to be compatible with multi-buildpack. Then we will release a "supply buildpack" that can always be used against any version of the CF HWC buildpack and this integrated buildpack can be used to support legacy versions of PAS for Windows.
+The purpose of this buildpack is to support users until PCF/CF releases a version of PAS for Windows with .profile.d support and updates the Cloudfoundry HWC buildpack to be compatible with multi-buildpack. Then we will release a "supply" buildpack that can always be used against any version of the CF HWC multi-buildpack and this integrated buildpack can be used to support legacy versions of PAS for Windows.
 
 ### Dependencies
 - [Golang Windows](https://golang.org/dl/)
@@ -77,7 +77,3 @@ To test this buildpack, run the following command from the buildpack's directory
     ```bash
     ./scripts/integration.sh
     ```
-
-### Active Development
-
-The project backlog for the original buildpack is on [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1042066).
