@@ -1,10 +1,14 @@
-# Cloud Foundry HWC Buildpack
+# AppDynamics Integrated HWC Buildpack
 
-A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for Windows applications.
+A fork of Cloud Foundry HWC buildpack version 2.3.14 for deploying .NET full framework applications with AppDynamics monitoring.
 
-Additional information can be found at [CloudFoundry.org](http://docs.cloudfoundry.org/buildpacks/).
+## Using this buildpack
 
-## Dependencies
+Cloudfoundry/PCF does not support specifying a buildpack from a git url for HWC like you can for other buildpacks so you will have to follow the instructions below for building the buildpack.
+
+The purpose of this buildpack is to support users until PCF/CF releases a version of PAS for Windows with .profile.d support and updates the Cloudfoundry HWC buildpack to be compatible with multi-buildpack. Then we will release a "supply buildpack" that can always be used against any version of the CF HWC buildpack and this integrated buildpack can be used to support legacy versions of PAS for Windows.
+
+### Dependencies
 - [Golang Windows](https://golang.org/dl/)
 - [Ginkgo](https://onsi.github.io/ginkgo/)
 - [Hostable Web Core](https://github.com/cloudfoundry-incubator/hwc)
@@ -41,6 +45,14 @@ To build this buildpack, run the following command from the buildpack's director
     cf push my_app -b [BUILDPACK_NAME] -s windows2012R2
     ```
 
+### Changing App/Tier/Node naming
+
+Currently by default, App/Tier/Node uses your application's Space/Space/AppName. You can change this by setting environment variables either on the command line or in Apps Manager:
+APPDYNAMICS_AGENT_APPLICATION_NAME, APPDYNAMICS_AGENT_TIER_NAME, APPDYNAMICS_AGENT_NODE_NAME
+```bash
+cf set-env your_application_name APPDYNAMICS_AGENT_NODE_NAME your_node_name
+```
+
 ### Testing
 
 Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/tree/master/cutlass) framework for running integration tests.
@@ -66,10 +78,6 @@ To test this buildpack, run the following command from the buildpack's directory
     ./scripts/integration.sh
     ```
 
-### Help and Support
-
-Join the #greenhouse channel in our [Slack community](http://slack.cloudfoundry.org/) if you need any further assistance.
-
 ### Active Development
 
-The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1042066).
+The project backlog for the original buildpack is on [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/1042066).
