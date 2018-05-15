@@ -6,6 +6,9 @@ A fork of Cloud Foundry HWC buildpack version 2.3.14 for deploying .NET full fra
 
 Cloudfoundry/PCF does not support specifying a buildpack from a git url for HWC like you can for other buildpacks so you will need to follow the instructions below for building the buildpack.
 
+Bind your app with an AppDynamics service instance and push your app with this buildpack. If you have already pushed your app using this buildpack then you can just restart your app after binding it.
+AppDynamics log messages will appear in the applications logs when everything has been installed correctly.
+
 The purpose of this buildpack is to support users until PCF/CF releases a version of PAS for Windows with .profile.d support and updates the Cloudfoundry HWC buildpack to be compatible with multi-buildpack. Then we will release a "supply" buildpack that can always be used against any version of the CF HWC multi-buildpack and this integrated buildpack can be used to support legacy versions of PAS for Windows.
 
 ### Dependencies
@@ -52,6 +55,10 @@ APPDYNAMICS_AGENT_APPLICATION_NAME, APPDYNAMICS_AGENT_TIER_NAME, APPDYNAMICS_AGE
 ```bash
 cf set-env your_application_name APPDYNAMICS_AGENT_NODE_NAME your_node_name
 ```
+
+### Advanced configuration
+
+You can create a .appdynamics folder in your application's directory (in the same directory as your app's web.config file) and place dlls, agent config, and/or log config in there to be used instead of the files from the buildpack. If you use the agent config then it will ignore the settings from the AppDynamics service broker -- this allows for fine-tuning more advanced settings if necessary.
 
 ### Testing
 
