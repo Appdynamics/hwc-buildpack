@@ -18,7 +18,7 @@ The purpose of this buildpack is to support users until PCF/CF releases a versio
 
 ### Building the Buildpack
 
-To build this buildpack, run the following command from the buildpack's directory:
+To build this buildpack, first download this repo then run the following command from the buildpack's directory:
 
 1. Source the .envrc file in the buildpack directory.
 
