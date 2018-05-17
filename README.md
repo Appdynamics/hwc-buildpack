@@ -25,7 +25,6 @@ To build this buildpack, run the following command from the buildpack's director
    ```bash
    source .envrc
    ```
-   To simplify the process in the future, install [direnv](https://direnv.net/) which will automatically source .envrc when you change directories.
 
 1. Install buildpack-packager
 
@@ -60,27 +59,3 @@ cf set-env your_application_name APPDYNAMICS_AGENT_NODE_NAME your_node_name
 
 You can create a .appdynamics folder in your application's directory (in the same directory as your app's web.config file) and place dlls, agent config, and/or log config in there to be used instead of the files from the buildpack. If you use the agent config then it will ignore the settings from the AppDynamics service broker -- this allows for fine-tuning more advanced settings if necessary.
 
-### Testing
-
-Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/tree/master/cutlass) framework for running integration tests.
-
-To test this buildpack, run the following command from the buildpack's directory (must be run against a Cloud Foundry deployment with Windows cells):
-
-1. Source the .envrc file in the buildpack directory.
-
-   ```bash
-   source .envrc
-   ```
-   To simplify the process in the future, install [direnv](https://direnv.net/) which will automatically source .envrc when you change directories.
-
-1. Run unit tests
-
-    ```bash
-    ./scripts/unit.sh
-    ```
-
-1. Run integration tests
-
-    ```bash
-    ./scripts/integration.sh
-    ```
