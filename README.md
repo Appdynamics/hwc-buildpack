@@ -13,8 +13,6 @@ The purpose of this buildpack is to support users until PCF/CF releases a versio
 
 ### Dependencies
 - [Golang Windows](https://golang.org/dl/)
-- [Ginkgo](https://onsi.github.io/ginkgo/)
-- [Hostable Web Core](https://github.com/cloudfoundry-incubator/hwc)
 
 ### Building the Buildpack
 
@@ -40,10 +38,13 @@ To build this buildpack, first download this repo then run the following command
 
 1. Use in Cloud Foundry
 
-   Upload the buildpack to your Cloud Foundry and optionally specify it by name
+   Upload the buildpack to your Cloud Foundry. Buildpack name can be anything (e.g. hwc_appd) and the buildpack zip file is the file output from the previous step. 
 
     ```bash
     cf create-buildpack [BUILDPACK_NAME] [BUILDPACK_ZIP_FILE_PATH] 1
+    ```
+   Then run from your application's directory:
+   ```bash
     cf push my_app -b [BUILDPACK_NAME] -s windows2012R2
     ```
 
